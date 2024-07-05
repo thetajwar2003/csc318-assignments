@@ -30,6 +30,11 @@ export default function Home() {
                 GPA Calculator
               </Link>
             </li>
+            <li className="mt-2">
+              <Link href="/task-manager" className="text-blue-600 underline">
+                Task Manager
+              </Link>
+            </li>
             {/* Add more assignments here */}
           </ul>
         </div>

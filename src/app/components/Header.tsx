@@ -23,11 +23,16 @@ export default function Header() {
           </svg>
           <span className="ml-3 text-xl">My Assignments</span>
         </Link>
-        <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        <div className="md:ml-auto flex flex-wrap items-center text-base justify-center">
           <Link href="/gpa-calc" className="mr-5 hover:text-white">
             GPA Calculator
           </Link>
-        </nav>
+        </div>
+        <div className="md:ml-auto flex flex-wrap items-center text-base justify-center">
+          <Link href="/task-manager" className="mr-5 hover:text-white">
+            Task Manager
+          </Link>
+        </div>
       </div>
     </header>
   );
