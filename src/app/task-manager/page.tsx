@@ -9,6 +9,7 @@ const API_URL =
 export default function TaskManager() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState({ title: "", description: "" });
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchTasks();
@@ -55,19 +56,36 @@ export default function TaskManager() {
     setNewTask({ ...newTask, [e.target.name]: e.target.value });
   };
 
-  return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">Task Manager</h1>
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
-        <div className="mt-6 w-full max-w-xl">
-          <div className="grid grid-cols-3 gap-4 mb-4">
+  const handleSearch = async () => {
+    if (!searchTerm) {
+      fetchTasks();
+    } else {
+      try {
+        const response = await axios.get(`${API_URL}/name/${searchTerm}`);
+        setTasks(response.data);
+      } catch (error) {
+        console.error("Error searching tasks:", error);
+      }
+    }
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-black text-white">
+      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
+        <h1 className="text-6xl font-bold mb-10">Task Manager</h1>
+
+        <div className="w-full max-w-2xl bg-gray-800 p-8 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <input
               type="text"
               name="title"
               value={newTask.title}
               onChange={handleChange}
-              className="border p-2 text-black"
+              className="border p-3 rounded-md text-black"
               placeholder="Title"
             />
             <input
@@ -75,26 +93,45 @@ export default function TaskManager() {
               name="description"
               value={newTask.description}
               onChange={handleChange}
-              className="border p-2 text-black"
+              className="border p-3 rounded-md text-black"
               placeholder="Description"
             />
             <button
               onClick={handleAddTask}
-              className="p-2 bg-blue-600 text-white rounded"
+              className="p-3 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               Add Task
             </button>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="border p-3 rounded-md text-black"
+              placeholder="Search by Title"
+            />
+            <button
+              onClick={handleSearch}
+              className="p-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 col-span-1 md:col-span-2"
+            >
+              Search
+            </button>
+          </div>
+
           {tasks.map((task) => (
-            <div key={task.id} className="flex items-center space-x-4 mt-4">
+            <div
+              key={task.id}
+              className="flex items-center space-x-4 mt-4 bg-gray-700 p-4 rounded-md"
+            >
               <input
                 type="text"
                 value={task.title}
                 onChange={(e) =>
                   handleUpdateTask(task.id, { ...task, title: e.target.value })
                 }
-                className="border p-2 text-black"
+                className="border p-3 rounded-md text-black flex-grow"
                 placeholder="Title"
               />
               <input
@@ -106,12 +143,12 @@ export default function TaskManager() {
                     description: e.target.value,
                   })
                 }
-                className="border p-2 text-black"
+                className="border p-3 rounded-md text-black flex-grow"
                 placeholder="Description"
               />
               <button
                 onClick={() => handleDeleteTask(task.id)}
-                className="text-red-600"
+                className="text-red-600 hover:text-red-800"
               >
                 ✕
               </button>
